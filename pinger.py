@@ -40,7 +40,25 @@ import os
 import sys
 
 def main() -> int:
-    """Main, já já te descrevo"""
+    """Pinger!
+
+    O programa tem 2 modos principais
+    de funcionamento!
+
+    1) O usuário digita as urls que ele quer
+    testar o ping manualmente
+    2) O usuário importa de um arquivo txt
+    as urls que devem ser testadas
+
+    Além disso, aceitamos:
+    -h ou --help pra mostrar um texto de ajuda
+    -i ou --interactive para preenchimento manual
+    -a ou --automatic para leitura automatica
+    de um arquivo txt
+    -o ou --output para definir o arquivo de
+    output quando usando a metodologia automatica
+
+    """
     print(sys.argv)
     return 0
 
