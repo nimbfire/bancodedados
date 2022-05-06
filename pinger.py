@@ -35,3 +35,15 @@ URL, IP, Status (Ativo ou Inativo), Data e Hora, formatados da seguinte maneira
 - Os pings devem ser disparados automaticamente (uma URL por vez) e uma mensagem deve
 ser informada na tela para o usuário:
 '''
+
+import os
+import sys
+
+def main() -> int:
+    """Main, já já te descrevo"""
+    print(sys.argv)
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())  # Pelo visto é o jeito certo neh
+
