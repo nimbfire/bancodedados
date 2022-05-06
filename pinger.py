@@ -39,6 +39,17 @@ ser informada na tela para o usuário:
 import os
 import sys
 
+running_mode = "undefined"
+flag_help = False
+flag_interactive = False
+flag_automatic = False
+flag_output = False
+flag_debug = False
+
+def _get_running_mode(args_list):
+    for arg in args_list:
+        print(arg)
+    return False
 def main() -> int:
     """Pinger!
 
@@ -60,6 +71,7 @@ def main() -> int:
 
     """
     print(sys.argv)
+    running_mode = _get_running_mode(sys.argv)
     return 0
 
 if __name__ == '__main__':
