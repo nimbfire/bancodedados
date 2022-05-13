@@ -47,9 +47,37 @@ flag_output = False
 flag_debug = False
 
 def _get_running_mode(args_list):
+
     for arg in args_list:
+        if arg == '-h' or arg == '--help':
+            global flag_help
+            flag_help = True
+            print('hel')
         print(arg)
     return False
+
+def _show_help():
+    print('help')
+    message = """Pinger!
+
+    O programa tem 2 modos principais
+    de funcionamento!
+
+    1) O usuário digita as urls que ele quer
+    testar o ping manualmente
+    2) O usuário importa de um arquivo txt
+    as urls que devem ser testadas
+
+    Além disso, aceitamos:
+    -h ou --help pra mostrar um texto de ajuda
+    -i ou --interactive para preenchimento manual
+    -a ou --automatic para leitura automatica
+    de um arquivo txt
+    -o ou --output para definir o arquivo de
+    output quando usando a metodologia automatica
+    """
+    print(message)
+
 def main() -> int:
     """Pinger!
 
@@ -71,7 +99,12 @@ def main() -> int:
 
     """
     print(sys.argv)
+    global flag_help
     running_mode = _get_running_mode(sys.argv)
+
+    if flag_help:
+        _show_help()
+        return 0
     return 0
 
 if __name__ == '__main__':
