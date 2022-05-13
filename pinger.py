@@ -39,6 +39,7 @@ ser informada na tela para o usuário:
 import os
 import sys
 from subprocess import call, check_output, CalledProcessError, STDOUT
+from datetime import datetime
 
 
 MODE_INTERACTIVE = "interactive"
@@ -138,16 +139,21 @@ def main() -> int:
     return 0
 
 def _interactive_loop():
-
+    resultados = []
     while True:
         entrada = input("Digite a url para pingar OU fim para finalizar o programa: ")
         if entrada == 'fim':
             print("Finalizando")
             print("Obrigado pela preferencia")
+            print(resultados)
             break
         else:
             try:
-                _ping(entrada)
+                resultado = _ping(entrada)
+                if resultado:
+                    resultados.append(_parse_resultados(resultado, entrada))
+                else:
+                    resultados.append(_resultado_inativo(entrada))
             except ValueError:
                 print("Erro ao pingar a url :/")
                 print("Por favor entre em contato com o admin")
@@ -155,7 +161,36 @@ def _interactive_loop():
 def _ping(url):
     comando = "ping -c 5 " + url
     print("------------ Pingando URL: www.google.com ")
-    execute(comando)
+
+    if (execute(comando) == 0):
+        resultado = get(comando)
+        return resultado
+
+    else:
+        print("Url não encontrada!")
+        return False
+
+def _parse_resultados(resultado, url):
+    # Exemplo de resultado esperado:
+    # (0, b'PING www.google.com (142.251.128.132) 56(84) bytes of data.\n64 bytes from gru06s71-in-f4.1e100.net (142.251.128.132): icmp_seq=1 ttl=55 time=166 ms\n64 bytes from gru06s71-in-f4.1e100.net (142.251.128.132): icmp_seq=2 ttl=55 time=145 ms\n64 bytes from gru06s71-in-f4.1e100.net (142.251.128.132): icmp_seq=3 ttl=55 time=33.7 ms\n64 bytes from gru06s71-in-f4.1e100.net (142.251.128.132): icmp_seq=4 ttl=55 time=45.2 ms\n64 bytes from gru06s71-in-f4.1e100.net (142.251.128.132): icmp_seq=5 ttl=55 time=22.0 ms\n\n--- www.google.com ping statistics ---\n5 packets transmitted, 5 received, 0% packet loss, time 4004ms\nrtt min/avg/max/mdev = 22.046/82.354/165.625/60.437 ms\n')
+    resultado_array = resultado[1].split()
+
+    return {
+        "url":url,
+        "ip": resultado_array[2].decode('ascii'),
+        "ativo":"Ativo",
+        "data": datetime.today().strftime('%Y/%m/%d'),
+        "hora": datetime.today().strftime('%H:%M:%S')
+    }
+
+def _resultado_inativo(url):
+    return {
+        "url":url,
+        "ip": "----",
+        "ativo":"Inativo",
+        "data": datetime.today().strftime('%Y/%m/%d'),
+        "hora": datetime.today().strftime('%H:%M:%S')
+    }
 
 def execute(comando):
     return call(comando.split())
