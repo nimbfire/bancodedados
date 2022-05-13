@@ -40,7 +40,7 @@ import os
 import sys
 from subprocess import call, check_output, CalledProcessError, STDOUT
 from datetime import datetime
-
+import csv
 
 MODE_INTERACTIVE = "interactive"
 MODE_AUTOMATIC = "automatic"
@@ -54,6 +54,7 @@ flag_output = False
 flag_debug = False
 file_input = "entrada.txt"
 file_output = "saida.txt"
+resultados = []
 
 def _get_running_mode(args_list):
     mode = MODE_UNDEFINED
@@ -125,7 +126,6 @@ def main() -> int:
     output quando usando a metodologia automatica
 
     """
-    print(sys.argv)
     global flag_help
     running_mode = _get_running_mode(sys.argv)
 
@@ -136,10 +136,30 @@ def main() -> int:
 
     if running_mode == MODE_INTERACTIVE:
         _interactive_loop()
+    elif running_mode == MODE_AUTOMATIC:
+        _automatic_loop()
     return 0
 
+def _automatic_loop():
+    f = open(file_input, "r")
+
+    while True:
+
+        line = f.readline()
+
+        # if line is empty
+        # end of file is reached
+        if not line:
+            break
+        ping(line.rstrip())
+
+
+    f.close()
+    mostra_resultados(resultados)
+    salva_resultados_csv(resultados, file_output)
+
 def _interactive_loop():
-    resultados = []
+
     while True:
         entrada = input("Digite a url para pingar OU fim para finalizar o programa: ")
         if entrada == 'fim':
@@ -149,18 +169,20 @@ def _interactive_loop():
             break
         else:
             try:
-                resultado = _ping(entrada)
-                if resultado:
-                    resultados.append(_parse_resultados(resultado, entrada))
-                else:
-                    resultados.append(_resultado_inativo(entrada))
+                ping(entrada)
             except ValueError:
                 print("Erro ao pingar a url :/")
                 print("Por favor entre em contato com o admin")
+def ping(url):
+    resultado = _ping(url)
+    if resultado:
+        resultados.append(_parse_resultados(resultado, url))
+    else:
+        resultados.append(_resultado_inativo(url))
 
 def _ping(url):
     comando = "ping -c 5 " + url
-    print("------------ Pingando URL: www.google.com ")
+    print("------------ Pingando URL: {} ".format(url))
 
     if (execute(comando) == 0):
         resultado = get(comando)
@@ -193,11 +215,23 @@ def _resultado_inativo(url):
     }
 
 def mostra_resultados(resultados):
-    print("URL --------------| IP ----------- | Status ------- | Data ------- | Hora -------")
-    print(" {:<30} |{:<16} |{:^7} |{:^12} |{:^10} |".format("URL","IP", "Ativo","Data","Hora"))
+
+    print(" {:<30} |{:<27} |{:^7} |{:^12} |{:^10} |".format("URL","IP", "Ativo","Data","Hora"))
+    for r in resultados:
+        print(" {:<30} |{:<27} |{:^7} |{:^12} |{:^10} |".format(r["url"], r["ip"], r["ativo"], r["data"], r["hora"]))
+
+def salva_resultados_csv(resultados, file):
+    f = open(file, 'w')
+    writer = csv.writer(f)
+
+    cabecalho = ["URL", "IP", "Ativo", "Data", "Hora"]
+    writer.writerow(cabecalho)
 
     for r in resultados:
-        print(" {:<30} |{:<16} |{:^7} |{:^12} |{:^10} |".format(r["url"], r["ip"], r["ativo"], r["data"], r["hora"]))
+        linha = [r["url"],r["ip"],r["ativo"],r["data"],r["hora"]]
+        writer.writerow(linha)
+    f.close()
+
 def execute(comando):
     return call(comando.split())
 

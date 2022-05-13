@@ -1,0 +1,3 @@
+URL,IP,Ativo,Data,Hora
+www.youtube.com,(2800:3f0:4001:832::200e)),Ativo,2022/05/13,20:10:45
+www.facebook.com,(2a03:2880:f105:283:face:b00c:0:25de)),Ativo,2022/05/13,20:10:53
