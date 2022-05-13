@@ -38,6 +38,8 @@ ser informada na tela para o usuário:
 
 import os
 import sys
+from subprocess import call, check_output, CalledProcessError, STDOUT
+
 
 MODE_INTERACTIVE = "interactive"
 MODE_AUTOMATIC = "automatic"
@@ -130,7 +132,42 @@ def main() -> int:
     if flag_help or running_mode == MODE_UNDEFINED:
         _show_help()
         return 0
+
+    if running_mode == MODE_INTERACTIVE:
+        _interactive_loop()
     return 0
+
+def _interactive_loop():
+
+    while True:
+        entrada = input("Digite a url para pingar OU fim para finalizar o programa: ")
+        if entrada == 'fim':
+            print("Finalizando")
+            print("Obrigado pela preferencia")
+            break
+        else:
+            try:
+                _ping(entrada)
+            except ValueError:
+                print("Erro ao pingar a url :/")
+                print("Por favor entre em contato com o admin")
+
+def _ping(url):
+    comando = "ping -c 5 " + url
+    print("------------ Pingando URL: www.google.com ")
+    execute(comando)
+
+def execute(comando):
+    return call(comando.split())
+
+def check (comando):
+    return call(comando.split()) == 0
+
+def get(comando):
+    try:
+        return 0, check_output(comando.split(), stderr=STDOUT)
+    except CalledProcessError as e:
+        return e.returncode, e.check_output
 
 if __name__ == '__main__':
     sys.exit(main())  # Pelo visto é o jeito certo neh
