@@ -39,6 +39,10 @@ ser informada na tela para o usuário:
 import os
 import sys
 
+MODE_INTERACTIVE = "interactive"
+MODE_AUTOMATIC = "automatic"
+MODE_UNDEFINED = "undefined"
+
 running_mode = "undefined"
 flag_help = False
 flag_interactive = False
@@ -47,14 +51,17 @@ flag_output = False
 flag_debug = False
 
 def _get_running_mode(args_list):
-
+    mode = MODE_UNDEFINED
     for arg in args_list:
         if arg == '-h' or arg == '--help':
             global flag_help
             flag_help = True
-            print('hel')
-        print(arg)
-    return False
+        if arg == "-i" or arg == "--interactive":
+            mode = MODE_INTERACTIVE
+        if arg == "-a" or arg == "--automatic":
+            mode = MODE_AUTOMATIC
+
+    return mode
 
 def _show_help():
     print('help')
@@ -102,7 +109,8 @@ def main() -> int:
     global flag_help
     running_mode = _get_running_mode(sys.argv)
 
-    if flag_help:
+    print("Running mode:{}".format(running_mode))
+    if flag_help or running_mode == MODE_UNDEFINED:
         _show_help()
         return 0
     return 0
