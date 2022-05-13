@@ -145,7 +145,7 @@ def _interactive_loop():
         if entrada == 'fim':
             print("Finalizando")
             print("Obrigado pela preferencia")
-            print(resultados)
+            mostra_resultados(resultados)
             break
         else:
             try:
@@ -192,6 +192,12 @@ def _resultado_inativo(url):
         "hora": datetime.today().strftime('%H:%M:%S')
     }
 
+def mostra_resultados(resultados):
+    print("URL --------------| IP ----------- | Status ------- | Data ------- | Hora -------")
+    print(" {:<30} |{:<16} |{:^7} |{:^12} |{:^10} |".format("URL","IP", "Ativo","Data","Hora"))
+
+    for r in resultados:
+        print(" {:<30} |{:<16} |{:^7} |{:^12} |{:^10} |".format(r["url"], r["ip"], r["ativo"], r["data"], r["hora"]))
 def execute(comando):
     return call(comando.split())
 
