@@ -49,6 +49,8 @@ flag_interactive = False
 flag_automatic = False
 flag_output = False
 flag_debug = False
+file_input = "entrada.txt"
+file_output = "saida.txt"
 
 def _get_running_mode(args_list):
     mode = MODE_UNDEFINED
@@ -60,7 +62,16 @@ def _get_running_mode(args_list):
             mode = MODE_INTERACTIVE
         if arg == "-a" or arg == "--automatic":
             mode = MODE_AUTOMATIC
-
+        if arg[0:3] == '-f=':
+            mode = MODE_AUTOMATIC
+            file_input = arg[3:]
+            print("Arquivo escolhido para importar:{}".format(file_input))
+        if arg[0:3] == '-o=':
+            mode = MODE_AUTOMATIC
+            file_output = arg[3:]
+            print("Arquivo escolhido para exportar:{}".format(file_output))
+        if arg == '-d':
+            flag_debug = True;
     return mode
 
 def _show_help():
@@ -80,8 +91,13 @@ def _show_help():
     -i ou --interactive para preenchimento manual
     -a ou --automatic para leitura automatica
     de um arquivo txt
-    -o ou --output para definir o arquivo de
-    output quando usando a metodologia automatica
+    -f=file para definir o arquivo
+    de leitura que o modo automatico usará para
+    importar as urls (se não ele vai tentar importar
+    do arquivo entrada.txt)
+    -o=file para definir o arquivo de
+    output quando usando a metodologia automatica (
+    se não ele vai salvar no arquivo saida.txt)
     """
     print(message)
 
@@ -101,6 +117,7 @@ def main() -> int:
     -i ou --interactive para preenchimento manual
     -a ou --automatic para leitura automatica
     de um arquivo txt
+
     -o ou --output para definir o arquivo de
     output quando usando a metodologia automatica
 
